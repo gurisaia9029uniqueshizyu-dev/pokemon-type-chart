@@ -332,6 +332,111 @@
     color: var(--text-muted);
   }
 
+  .dual { margin-top: 32px; }
+  .dual h2 {
+    margin: 0 0 4px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .dual .section-sub {
+    margin: 0 0 14px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  .picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .picker button {
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+  }
+  .picker button:hover { border-color: var(--accent); }
+  .picker button[aria-pressed="true"] {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    font-weight: 600;
+  }
+  .picker button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .dual-result {
+    min-height: 64px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+  .dual-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 8px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .grp {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    gap: 6px 12px;
+    align-items: start;
+    padding: 9px 0;
+    border-top: 1px solid var(--border);
+  }
+  .grp-label {
+    justify-self: start;
+    padding: 2px 10px;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .grp-label.x4 { background: var(--eff-super-bg); color: var(--eff-super); border-color: var(--eff-super); }
+  .grp-label.x2 { background: var(--eff-super-bg); color: var(--eff-super); }
+  .grp-label.x1 { background: var(--cell-alt-bg); color: var(--text-muted); border-color: var(--border); }
+  .grp-label.xh { background: var(--eff-weak-bg); color: var(--eff-weak); }
+  .grp-label.xq { background: var(--eff-weak-bg); color: var(--eff-weak); border-color: var(--eff-weak); }
+  .grp-label.x0 { background: var(--eff-none-bg); color: var(--eff-none-fg); }
+  .grp-types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tchip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 9px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 12.5px;
+    font-weight: 500;
+  }
+
   @media (max-width: 640px) {
     .page { padding: 28px 16px 56px; }
     .legend { padding: 12px 14px; gap: 8px 16px; }
@@ -346,6 +451,11 @@
     th.col-head .label { gap: 4px; padding: 6px 0; font-size: 10px; }
     .dot { width: 7px; height: 7px; }
     td.cell { width: auto; min-width: 0; height: 26px; padding: 0; font-size: 10px; }
+
+    .picker { display: grid; grid-template-columns: repeat(3, 1fr); }
+    .picker button { padding: 8px 6px; font-size: 12.5px; }
+    .dual-result { padding: 12px 14px; }
+    .grp { grid-template-columns: 1fr; gap: 6px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -359,7 +469,7 @@
   <header class="hero">
     <p class="eyebrow">POKÉMON CHAMPIONS 基準</p>
     <h1>ポケモン タイプ相性早見表</h1>
-    <p class="sub">縦(左)が攻撃側タイプ、横(上)が防御側タイプ。交差するマスがダメージ倍率です。マスや見出しをタップ(クリック)すると、下の欄に詳しい相性が出ます。</p>
+    <p class="sub">縦(左)が攻撃側タイプ、横(上)が防御側タイプ。交差するマスがダメージ倍率です。マスや見出しをタップ(クリック)すると、下の欄に詳しい相性が出ます。複合タイプは表の下の欄で調べられます。</p>
   </header>
 
   <div class="legend">
@@ -374,6 +484,13 @@
   <div class="table-wrap">
     <table class="chart" id="chart"></table>
   </div>
+
+  <section class="dual">
+    <h2>複合タイプで調べる</h2>
+    <p class="section-sub">防御側のタイプを1つか2つ選ぶと、どのタイプの技がどれだけ効くかを一覧にします。3つ目を選ぶと、いちばん前に選んだタイプが外れます。</p>
+    <div class="picker" id="picker" role="group" aria-label="防御側のタイプ"></div>
+    <div class="dual-result" id="dualResult" aria-live="polite"></div>
+  </section>
 
   <section class="notes">
     <h2>ポケモンチャンピオンズについて</h2>
@@ -588,6 +705,64 @@
     e.preventDefault();
     toggle(t);
   });
+
+  /* ---- dual-type lookup ---- */
+  var picker = document.getElementById("picker");
+  var dualEl = document.getElementById("dualResult");
+  var DUAL_DEFAULT = "タイプを選ぶと、ここに結果が出ます。2つ選ぶと複合タイプの倍率になります。";
+  var chosen = [];
+
+  var GROUPS = [
+    { v: 4,    cls: "x4", label: "ちょうバツグン(4倍)" },
+    { v: 2,    cls: "x2", label: "ばつぐん(2倍)" },
+    { v: 1,    cls: "x1", label: "等倍(1倍)" },
+    { v: 0.5,  cls: "xh", label: "いまひとつ(½倍)" },
+    { v: 0.25, cls: "xq", label: "かなりいまひとつ(¼倍)" },
+    { v: 0,    cls: "x0", label: "効果なし(0倍)" }
+  ];
+
+  function chip(i) {
+    return '<span class="tchip"><span class="dot" style="background:' + TYPES[i].color + '"></span>' + TYPES[i].name + "</span>";
+  }
+
+  function renderDual() {
+    Array.prototype.forEach.call(picker.children, function (btn, i) {
+      btn.setAttribute("aria-pressed", chosen.indexOf(i) !== -1 ? "true" : "false");
+    });
+    if (!chosen.length) { dualEl.textContent = DUAL_DEFAULT; return; }
+
+    var buckets = {};
+    TYPES.forEach(function (atk, a) {
+      var m = 1;
+      chosen.forEach(function (d) { m *= matrix[a][d]; });
+      (buckets[m] = buckets[m] || []).push(a);
+    });
+
+    var html = '<p class="dual-title">' + chosen.map(chip).join("") + "のポケモンが受けるダメージ</p>";
+    GROUPS.forEach(function (g) {
+      if (!buckets[g.v]) return;
+      html += '<div class="grp"><span class="grp-label ' + g.cls + '">' + g.label + "</span>" +
+        '<div class="grp-types">' + buckets[g.v].map(chip).join("") + "</div></div>";
+    });
+    dualEl.innerHTML = html;
+  }
+
+  TYPES.forEach(function (t, i) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.innerHTML = '<span class="dot" style="background:' + t.color + '"></span>' + t.name;
+    btn.addEventListener("click", function () {
+      var k = chosen.indexOf(i);
+      if (k !== -1) chosen.splice(k, 1);
+      else {
+        chosen.push(i);
+        if (chosen.length > 2) chosen.shift();
+      }
+      renderDual();
+    });
+    picker.appendChild(btn);
+  });
+  renderDual();
 })();
 </script>
 </body>
