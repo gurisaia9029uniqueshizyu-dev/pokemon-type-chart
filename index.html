@@ -676,20 +676,6 @@
   function same(a, b) { return !!a && !!b && a.row === b.row && a.col === b.col; }
 
   var sticky = null;
-  var hover = null;
-
-  table.addEventListener("pointermove", function (e) {
-    if (e.pointerType !== "mouse" || sticky) return;
-    var t = targetOf(e);
-    if (same(t, hover)) return;
-    hover = t;
-    apply(t);
-  });
-  table.addEventListener("pointerleave", function () {
-    if (sticky) return;
-    hover = null;
-    apply(null);
-  });
 
   function toggle(t) {
     if (!t) return;
