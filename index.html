@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ポケモン タイプ相性早見表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=IBM+Plex+Sans+JP:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #f5f3ee;
+    --surface: #ffffff;
+    --surface-2: #ede9e0;
+    --text: #24221c;
+    --text-muted: #6f6a5c;
+    --border: #ddd7c8;
+    --accent: #4a4a8f;
+    --accent-soft: #e6e5f3;
+
+    --eff-super: #2f8f5b;
+    --eff-super-bg: #d9efe1;
+    --eff-weak: #b6531f;
+    --eff-weak-bg: #f6e4d4;
+    --eff-none-bg: #24221c;
+    --eff-none-fg: #f5f3ee;
+    --cell-alt-bg: #faf8f2;
+    --row-hi: #fbf4d9;
+    --cross-hi: #f6e79b;
+
+    --shadow: 0 1px 2px rgba(36,34,28,0.06), 0 8px 24px -12px rgba(36,34,28,0.18);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #171613;
+      --surface: #201e1a;
+      --surface-2: #2a2823;
+      --text: #eeece4;
+      --text-muted: #a49d8a;
+      --border: #3a372e;
+      --accent: #9695e0;
+      --accent-soft: #2c2b4a;
+
+      --eff-super: #6fd39d;
+      --eff-super-bg: #1e332a;
+      --eff-weak: #e8a06b;
+      --eff-weak-bg: #3a2a1c;
+      --eff-none-bg: #0e0d0b;
+      --eff-none-fg: #eeece4;
+      --cell-alt-bg: #262420;
+      --row-hi: #3a341c;
+      --cross-hi: #57501f;
+
+      --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 8px 24px -12px rgba(0,0,0,0.6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #171613;
+    --surface: #201e1a;
+    --surface-2: #2a2823;
+    --text: #eeece4;
+    --text-muted: #a49d8a;
+    --border: #3a372e;
+    --accent: #9695e0;
+    --accent-soft: #2c2b4a;
+
+    --eff-super: #6fd39d;
+    --eff-super-bg: #1e332a;
+    --eff-weak: #e8a06b;
+    --eff-weak-bg: #3a2a1c;
+    --eff-none-bg: #0e0d0b;
+    --eff-none-fg: #eeece4;
+    --cell-alt-bg: #262420;
+    --row-hi: #3a341c;
+    --cross-hi: #57501f;
+
+    --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 8px 24px -12px rgba(0,0,0,0.6);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans JP", "Hiragino Kaku Gothic ProN", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 64px;
+  }
+
+  header.hero {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .eyebrow {
+    margin: 0;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  h1 {
+    font-family: "Baloo 2", "IBM Plex Sans JP", sans-serif;
+    font-weight: 800;
+    font-size: clamp(28px, 4vw, 38px);
+    margin: 0;
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+  }
+
+  .sub {
+    color: var(--text-muted);
+    font-size: 15px;
+    margin: 0;
+    max-width: 62ch;
+    line-height: 1.6;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    margin: 22px 0 14px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .swatch {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 600;
+    font-size: 11px;
+    flex: none;
+  }
+  .swatch.super { background: var(--eff-super-bg); color: var(--eff-super); }
+  .swatch.weak { background: var(--eff-weak-bg); color: var(--eff-weak); }
+  .swatch.none { background: var(--eff-none-bg); color: var(--eff-none-fg); }
+  .swatch.normal { background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); }
+
+  .readout {
+    margin: 0 0 14px;
+    padding: 12px 18px;
+    min-height: 64px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+  .readout strong { color: var(--text); font-weight: 600; }
+  .readout .line { display: block; }
+  .readout .k { font-weight: 600; }
+  .readout .k.super { color: var(--eff-super); }
+  .readout .k.weak { color: var(--eff-weak); }
+  .readout .k.none { color: var(--text); }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    background: var(--surface);
+  }
+
+  table.chart {
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: "IBM Plex Mono", monospace;
+    touch-action: manipulation;
+  }
+
+  .corner {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    padding: 6px 10px;
+    font-family: "IBM Plex Sans JP", sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-muted);
+    text-align: left;
+    line-height: 1.3;
+    min-width: 104px;
+  }
+
+  th.col-head {
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    padding: 0;
+    width: 40px;
+    min-width: 40px;
+    height: 96px;
+    cursor: pointer;
+  }
+
+  th.col-head .label {
+    writing-mode: vertical-rl;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 0;
+    font-family: "IBM Plex Sans JP", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex: none;
+  }
+
+  th.row-head {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--surface-2);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    padding: 0 10px;
+    min-width: 104px;
+    font-family: "IBM Plex Sans JP", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  th.row-head .rh {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  td.cell {
+    width: 40px;
+    min-width: 40px;
+    height: 34px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 12px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    color: var(--text-muted);
+    transition: background-color 90ms ease;
+  }
+
+  tr:nth-child(even) td.cell { background: var(--cell-alt-bg); }
+  td.cell.super { background: var(--eff-super-bg); color: var(--eff-super); }
+  td.cell.weak { background: var(--eff-weak-bg); color: var(--eff-weak); }
+  td.cell.none { background: var(--eff-none-bg); color: var(--eff-none-fg); }
+
+  th.hi { background: var(--accent-soft); }
+  td.cell.row-hi:not(.super):not(.weak):not(.none),
+  td.cell.col-hi:not(.super):not(.weak):not(.none) { background: var(--row-hi); }
+  td.cell.cross:not(.super):not(.weak):not(.none) { background: var(--cross-hi); color: var(--text); }
+  td.cell.cross { outline: 2px solid var(--accent); outline-offset: -2px; }
+  td.cell.row-hi.super, td.cell.col-hi.super,
+  td.cell.row-hi.weak, td.cell.col-hi.weak { filter: saturate(1.3); }
+
+  th.col-head:focus-visible,
+  th.row-head:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+
+  .notes {
+    margin-top: 28px;
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .notes h2 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .notes ul {
+    margin: 0;
+    padding-left: 1.2em;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+  .notes .caveat {
+    margin: 10px 0 0;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 640px) {
+    .page { padding: 28px 16px 56px; }
+    .legend { padding: 12px 14px; gap: 8px 16px; }
+    .readout { padding: 12px 14px; }
+    .notes { padding: 16px 14px; }
+
+    table.chart { width: 100%; table-layout: fixed; }
+    .corner { width: 70px; min-width: 0; padding: 4px 6px; font-size: 9px; }
+    th.row-head { width: 70px; min-width: 0; padding: 0 4px; font-size: 10.5px; }
+    th.row-head .rh { gap: 3px; }
+    th.col-head { width: auto; min-width: 0; height: 76px; }
+    th.col-head .label { gap: 4px; padding: 6px 0; font-size: 10px; }
+    .dot { width: 7px; height: 7px; }
+    td.cell { width: auto; min-width: 0; height: 26px; padding: 0; font-size: 10px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    td.cell { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <header class="hero">
+    <p class="eyebrow">POKÉMON CHAMPIONS 基準</p>
+    <h1>ポケモン タイプ相性早見表</h1>
+    <p class="sub">縦(左)が攻撃側タイプ、横(上)が防御側タイプ。交差するマスがダメージ倍率です。マスや見出しをタップ(クリック)すると、下の欄に詳しい相性が出ます。</p>
+  </header>
+
+  <div class="legend">
+    <div class="legend-item"><span class="swatch super">2</span>ばつぐん</div>
+    <div class="legend-item"><span class="swatch weak">½</span>いまひとつ</div>
+    <div class="legend-item"><span class="swatch none">0</span>効果なし</div>
+    <div class="legend-item"><span class="swatch normal">–</span>等倍</div>
+  </div>
+
+  <p class="readout" id="readout" aria-live="polite">マスや見出しをタップ(クリック)すると、ここに相性が表示されます。</p>
+
+  <div class="table-wrap">
+    <table class="chart" id="chart"></table>
+  </div>
+
+  <section class="notes">
+    <h2>ポケモンチャンピオンズについて</h2>
+    <ul>
+      <li>18タイプの相性倍率は、通常作と同じ表で作っています。調べた範囲では、チャンピオンズで倍率が変わったという情報は見つかりませんでした。</li>
+      <li>2タイプのポケモンは倍率を掛け算します。2×2で4倍、½×½で¼倍、片方が0なら効果なしです。</li>
+      <li>チャンピオンズでは、4倍と¼倍が「ちょうバツグン」「かなりいまひとつ」と表示されるとされています。</li>
+      <li>ステラタイプは、レギュレーションM-Aの時点では未実装とされています。</li>
+    </ul>
+    <p class="caveat">以上は攻略サイトの情報をもとにしており、公式の一覧で確認したものではありません。アップデートで変わる可能性があります。</p>
+  </section>
+</div>
+
+<script>
+(function () {
+  var TYPES = [
+    { name: "ノーマル",   color: "#A8A77A" },
+    { name: "ほのお",     color: "#EE8130" },
+    { name: "みず",       color: "#6390F0" },
+    { name: "でんき",     color: "#F7D02C" },
+    { name: "くさ",       color: "#7AC74C" },
+    { name: "こおり",     color: "#96D9D6" },
+    { name: "かくとう",   color: "#C22E28" },
+    { name: "どく",       color: "#A33EA1" },
+    { name: "じめん",     color: "#E2BF65" },
+    { name: "ひこう",     color: "#A98FF3" },
+    { name: "エスパー",   color: "#F95587" },
+    { name: "むし",       color: "#A6B91A" },
+    { name: "いわ",       color: "#B6A136" },
+    { name: "ゴースト",   color: "#735797" },
+    { name: "ドラゴン",   color: "#6F35FC" },
+    { name: "あく",       color: "#705746" },
+    { name: "はがね",     color: "#B7B7CE" },
+    { name: "フェアリー", color: "#D685AD" }
+  ];
+
+  // matrix[attacker][defender] = multiplier
+  var matrix = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,0.5,0,1,1,0.5,1],
+    [1,0.5,0.5,1,2,2,1,1,1,1,1,2,0.5,1,0.5,1,2,1],
+    [1,2,0.5,1,0.5,1,1,1,2,1,1,1,2,1,0.5,1,1,1],
+    [1,1,2,0.5,0.5,1,1,1,0,2,1,1,1,1,0.5,1,1,1],
+    [1,0.5,2,1,0.5,1,1,0.5,2,0.5,1,0.5,2,1,0.5,1,0.5,1],
+    [1,0.5,0.5,1,2,0.5,1,1,2,2,1,1,1,1,2,1,0.5,1],
+    [2,1,1,1,1,2,1,0.5,1,0.5,0.5,0.5,2,0,1,2,2,0.5],
+    [1,1,1,1,2,1,1,0.5,0.5,1,1,1,0.5,0.5,1,1,0,2],
+    [1,2,1,2,0.5,1,1,2,1,0,1,0.5,2,1,1,1,2,1],
+    [1,1,1,0.5,2,1,2,1,1,1,1,2,0.5,1,1,1,0.5,1],
+    [1,1,1,1,1,1,2,2,1,1,0.5,1,1,1,1,0,0.5,1],
+    [1,0.5,1,1,2,1,0.5,0.5,1,0.5,2,1,1,0.5,1,2,0.5,0.5],
+    [1,2,1,1,1,2,0.5,1,0.5,2,1,2,1,1,1,1,0.5,1],
+    [0,1,1,1,1,1,1,1,1,1,2,1,1,2,1,0.5,1,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,0.5,0],
+    [1,1,1,1,1,1,0.5,1,1,1,2,1,1,2,1,0.5,1,0.5],
+    [1,0.5,0.5,0.5,1,2,1,1,1,1,1,1,2,1,1,1,0.5,2],
+    [1,0.5,1,1,1,1,2,0.5,1,1,1,1,1,1,2,2,0.5,1]
+  ];
+
+  function effClass(v) { return v === 0 ? "none" : v === 2 ? "super" : v === 0.5 ? "weak" : ""; }
+  function effMark(v) { return v === 0 ? "0" : v === 2 ? "2" : v === 0.5 ? "½" : ""; }
+  function effText(v) {
+    return v === 0 ? "効果なし(0倍)" : v === 2 ? "ばつぐん(2倍)" : v === 0.5 ? "いまひとつ(½倍)" : "等倍(1倍)";
+  }
+
+  var table = document.getElementById("chart");
+  var readoutEl = document.getElementById("readout");
+  var DEFAULT_READOUT = readoutEl.textContent;
+
+  var thead = document.createElement("thead");
+  var headRow = document.createElement("tr");
+  var corner = document.createElement("th");
+  corner.className = "corner";
+  corner.scope = "col";
+  corner.textContent = "攻撃 ＼ 防御";
+  headRow.appendChild(corner);
+  TYPES.forEach(function (t, j) {
+    var th = document.createElement("th");
+    th.className = "col-head";
+    th.dataset.col = j;
+    th.tabIndex = 0;
+    th.innerHTML = '<span class="label"><span class="dot" style="background:' + t.color + '"></span>' + t.name + "</span>";
+    headRow.appendChild(th);
+  });
+  thead.appendChild(headRow);
+  table.appendChild(thead);
+
+  var tbody = document.createElement("tbody");
+  TYPES.forEach(function (atk, i) {
+    var tr = document.createElement("tr");
+    var rh = document.createElement("th");
+    rh.className = "row-head";
+    rh.scope = "row";
+    rh.dataset.row = i;
+    rh.tabIndex = 0;
+    rh.innerHTML = '<span class="rh"><span class="dot" style="background:' + atk.color + '"></span>' + atk.name + "</span>";
+    tr.appendChild(rh);
+
+    TYPES.forEach(function (def, j) {
+      var v = matrix[i][j];
+      var td = document.createElement("td");
+      td.className = "cell " + effClass(v);
+      td.dataset.row = i;
+      td.dataset.col = j;
+      td.textContent = effMark(v);
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+
+  function names(list) {
+    return list.map(function (idx) { return TYPES[idx].name; }).join("・");
+  }
+
+  function summaryLines(heading, groups) {
+    var html = '<span class="line"><strong>' + heading + "</strong></span>";
+    groups.forEach(function (g) {
+      html += '<span class="line"><span class="k ' + g.cls + '">' + g.label + "</span>:" + (g.list.length ? names(g.list) : "なし") + "</span>";
+    });
+    return html;
+  }
+
+  function readoutFor(t) {
+    if (!t) return DEFAULT_READOUT;
+    if (t.row !== null && t.col !== null) {
+      var v = matrix[t.row][t.col];
+      return "<strong>" + TYPES[t.row].name + "の技 → " + TYPES[t.col].name + "タイプ</strong>:" + effText(v);
+    }
+    var sup = [], weak = [], none = [], k;
+    if (t.row !== null) {
+      for (k = 0; k < TYPES.length; k++) {
+        var a = matrix[t.row][k];
+        if (a === 2) sup.push(k); else if (a === 0.5) weak.push(k); else if (a === 0) none.push(k);
+      }
+      return summaryLines(TYPES[t.row].name + "タイプの技で攻撃すると", [
+        { cls: "super", label: "ばつぐん", list: sup },
+        { cls: "weak", label: "いまひとつ", list: weak },
+        { cls: "none", label: "効果なし", list: none }
+      ]);
+    }
+    for (k = 0; k < TYPES.length; k++) {
+      var d = matrix[k][t.col];
+      if (d === 2) sup.push(k); else if (d === 0.5) weak.push(k); else if (d === 0) none.push(k);
+    }
+    return summaryLines(TYPES[t.col].name + "タイプが受けるとき", [
+      { cls: "super", label: "弱点(ばつぐん)", list: sup },
+      { cls: "weak", label: "耐性(いまひとつ)", list: weak },
+      { cls: "none", label: "無効", list: none }
+    ]);
+  }
+
+  function apply(t) {
+    table.querySelectorAll(".row-hi, .col-hi, .cross, .hi").forEach(function (el) {
+      el.classList.remove("row-hi", "col-hi", "cross", "hi");
+    });
+    if (t) {
+      if (t.row !== null) {
+        table.querySelectorAll('[data-row="' + t.row + '"]').forEach(function (el) {
+          el.classList.add(el.classList.contains("cell") ? "row-hi" : "hi");
+        });
+      }
+      if (t.col !== null) {
+        table.querySelectorAll('[data-col="' + t.col + '"]').forEach(function (el) {
+          el.classList.add(el.classList.contains("cell") ? "col-hi" : "hi");
+        });
+      }
+      if (t.row !== null && t.col !== null) {
+        table.querySelector('.cell[data-row="' + t.row + '"][data-col="' + t.col + '"]').classList.add("cross");
+      }
+    }
+    readoutEl.innerHTML = readoutFor(t);
+  }
+
+  function targetOf(e) {
+    var cell = e.target.closest(".cell");
+    if (cell) return { row: +cell.dataset.row, col: +cell.dataset.col };
+    var rh = e.target.closest(".row-head");
+    if (rh) return { row: +rh.dataset.row, col: null };
+    var ch = e.target.closest(".col-head");
+    if (ch) return { row: null, col: +ch.dataset.col };
+    return null;
+  }
+  function same(a, b) { return !!a && !!b && a.row === b.row && a.col === b.col; }
+
+  var sticky = null;
+  var hover = null;
+
+  table.addEventListener("pointermove", function (e) {
+    if (e.pointerType !== "mouse" || sticky) return;
+    var t = targetOf(e);
+    if (same(t, hover)) return;
+    hover = t;
+    apply(t);
+  });
+  table.addEventListener("pointerleave", function () {
+    if (sticky) return;
+    hover = null;
+    apply(null);
+  });
+
+  function toggle(t) {
+    if (!t) return;
+    if (same(sticky, t)) { sticky = null; apply(null); return; }
+    sticky = t;
+    apply(t);
+  }
+  table.addEventListener("click", function (e) { toggle(targetOf(e)); });
+  table.addEventListener("keydown", function (e) {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    var t = targetOf(e);
+    if (!t) return;
+    e.preventDefault();
+    toggle(t);
+  });
+})();
+</script>
+</body>
+</html>
