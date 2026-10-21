@@ -285,7 +285,7 @@
     transition: background-color 90ms ease;
   }
 
-  tr:nth-child(even) td.cell { background: var(--cell-alt-bg); }
+  :where(tr:nth-child(even)) td.cell:not(.super):not(.weak):not(.none) { background: var(--cell-alt-bg); }
   td.cell.super { background: var(--eff-super-bg); color: var(--eff-super); }
   td.cell.weak { background: var(--eff-weak-bg); color: var(--eff-weak); }
   td.cell.none { background: var(--eff-none-bg); color: var(--eff-none-fg); }
